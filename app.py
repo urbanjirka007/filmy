@@ -7,10 +7,10 @@ st.set_page_config(page_title="Filmový Zápisník", page_icon="🎬", layout="c
 st.title("🎬 Filmový Zápisník do Notion")
 
 # 1. KONFIGURACE API KLÍČŮ
-# !!! SEM VLOŽ SVŮJ TMDB KLÍČ (nyní je tu prázdný text, bez něj vyhledávání vyhodí chybu) !!!
 TMDB_API_KEY = "1c1dcf69150a811c9196c338045983a3" 
 NOTION_TOKEN = "ntn_p75258623695St2zIkmATryx6pmfPexDXD3gEjupbLs01a"
-NOTION_DATABASE_ID = "1b3cdbdc7dd84b0099add0811623d9b7"
+# Tady necháme ID přesně tak, jak jsi ho měl, a kód si ho sám vyčistí
+NOTION_DATABASE_ID = "1b3cdbdc-7dd8-4b00-99ad-d0811623d9b7"
 
 # Inicializace TMDB
 tmdb = TMDb()
@@ -20,17 +20,19 @@ movie_service = Movie()
 
 # Funkce pro odeslání dat do Notion
 def ulozit_do_notion(titulek, popis, poster_url, hodnoceni, datum_vydani):
+    # Automatické vyčištění ID databáze (odstranění pomlček, pokud tam jsou)
+    clean_db_id = NOTION_DATABASE_ID.replace("-", "").strip()
+    
     headers = {
         "Authorization": f"Bearer {NOTION_TOKEN}",
         "Content-Type": "application/json",
         "Notion-Version": "2022-06-28"
     }
     
-    # Omezení délky popisu pro Notion property (max 2000 znaků)
     zkraceny_popis = popis[:1900] + "..." if len(popis) > 1900 else popis
     
     payload = {
-        "parent": { "database_id": NOTION_DATABASE_ID },
+        "parent": { "database_id": clean_db_id },
         "properties": {
             "Název": {
                 "title": [
@@ -64,7 +66,6 @@ def ulozit_do_notion(titulek, popis, poster_url, hodnoceni, datum_vydani):
         ]
     }
     
-    # Pokud máme plakát, přidáme ho jako cover (obálku) stránky a také do obsahu
     if poster_url:
         payload["cover"] = {
             "type": "external",
@@ -110,7 +111,6 @@ if query:
             st.markdown(f"**📅 Vydáno:** {details.release_date}")
             st.write("")
             
-            # Tlačítko pro uložení
             if st.button("🚀 Uložit film do Notion", type="primary"):
                 with st.spinner("Ukládám do Notion..."):
                     res = ulozit_do_notion(
