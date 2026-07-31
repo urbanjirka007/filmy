@@ -10,7 +10,7 @@ st.title("🎬 Filmový Zápisník do Notion")
 TMDB_API_KEY = "1c1dcf69150a811c9196c338045983a3" 
 NOTION_TOKEN = "ntn_p75258623695St2zIkmATryx6pmfPexDXD3gEjupbLs01a"
 # Tady necháme ID přesně tak, jak jsi ho měl, a kód si ho sám vyčistí
-NOTION_DATABASE_ID = "2b3b46036c594b3ba7d54c7e56dd763e?v=cd6dfdb83d5145628f15736ff61c7247"
+NOTION_DATABASE_ID = "2b3b46036c594b3ba7d54c7e56dd763e"
 
 # Inicializace TMDB
 tmdb = TMDb()
